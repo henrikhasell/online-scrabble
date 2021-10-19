@@ -6,13 +6,7 @@ from .trie import Trie
 
 class Anchor:
     def __init__(
-        self,
-        x: int,
-        y: int,
-        x_length: int,
-        y_length: int,
-        x_trie: Trie,
-        y_trie: Trie
+        self, x: int, y: int, x_length: int, y_length: int, x_trie: Trie, y_trie: Trie
     ):
         self.x = x
         self.y = y
@@ -81,13 +75,6 @@ def calculate_anchors(grid: Grid, trie: Trie) -> List[Anchor]:
     if not anchors:
         grid_w2 = int(grid.width / 2)
         grid_h2 = int(grid.height / 2)
-        anchors += [Anchor(
-            grid_w2,
-            grid_h2,
-            grid_w2,
-            grid_h2,
-            trie,
-            trie
-        )]
+        anchors += [Anchor(grid_w2, grid_h2, grid_w2, grid_h2, trie, trie)]
 
     return anchors

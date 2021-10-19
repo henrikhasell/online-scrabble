@@ -14,13 +14,13 @@ class Grid:
 
     def json(self) -> dict:
         return {
-            'width': self.width,
-            'height': self.height,
-            'tiles': [i.json() for i in self.tiles]
+            "width": self.width,
+            "height": self.height,
+            "tiles": [i.json() for i in self.tiles],
         }
 
     def __str__(self) -> str:
-        result = ''
+        result = ""
         for y in range(self.height):
             result += Fore.WHITE
 
@@ -28,15 +28,18 @@ class Grid:
                 tile = self.get_tile(x, y)
                 result += str(tile)
 
-            result += f'{Style.RESET_ALL}'
+            result += f"{Style.RESET_ALL}"
 
             if y < self.height - 1:
-                result += '\n'
+                result += "\n"
 
         return result
 
     def get_word(self, x: int, y: int, horizontal: bool) -> str:
-        result = ''
+        if self.get_tile(x, y).value is None:
+            return ""
+
+        result = ""
 
         if horizontal:
             while x > 0 and self.get_tile(x - 1, y).value:
@@ -92,10 +95,9 @@ class Grid:
                 y += 1
 
     def copy(self):
-        tiles = list(map(
-            lambda i: Tile(i.type, i.value, i.wild, i.cross_check),
-            self.tiles
-        ))
+        tiles = list(
+            map(lambda i: Tile(i.type, i.value, i.wild, i.cross_check), self.tiles)
+        )
         return Grid(self.width, self.height, tiles)
 
     def reset_crosscheck(self):
@@ -105,10 +107,12 @@ class Grid:
 
     @staticmethod
     def empty(width: int, height: int):
-        tiles = list(map(
-            lambda i: Tile(TileType.Normal, None, False, False),
-            range(width * height)
-        ))
+        tiles = list(
+            map(
+                lambda i: Tile(TileType.Normal, None, False, False),
+                range(width * height),
+            )
+        )
         return Grid(width, height, tiles)
 
     @staticmethod
@@ -203,7 +207,7 @@ class Grid:
     @staticmethod
     def from_json(json_data: dict):
         return Grid(
-            json_data['width'],
-            json_data['height'],
-            [Tile.from_json(i) for i in json_data['tiles']]
+            json_data["width"],
+            json_data["height"],
+            [Tile.from_json(i) for i in json_data["tiles"]],
         )

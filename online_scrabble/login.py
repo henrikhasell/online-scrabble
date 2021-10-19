@@ -12,20 +12,20 @@ class User(UserMixin):
 
 def create_request_loader(login_manager: LoginManager) -> Callable:
     def request_loader(request: Request) -> Optional[str]:
-        api_key = request.headers.get('Authorization')
+        api_key = request.headers.get("Authorization")
 
         if not api_key:
             return None
 
-        api_key = api_key.replace('Basic ', '', 1)
-        
+        api_key = api_key.replace("Basic ", "", 1)
+
         try:
-            api_key = b64decode(api_key).decode('utf-8')
+            api_key = b64decode(api_key).decode("utf-8")
         except UnicodeDecodeError:
             return None
 
         try:
-            username, _ = api_key.split(':', 1)
+            username, _ = api_key.split(":", 1)
         except TypeError:
             return None
 
@@ -37,8 +37,8 @@ def create_request_loader(login_manager: LoginManager) -> Callable:
 
 def create_unauthorized_handler(login_manager: LoginManager) -> Callable:
     def unauthorized_handler() -> Response:
-        response = make_response('', 401)
-        response.headers['WWW-Authenticate'] = 'Basic realm="Online Scrabble"'
+        response = make_response("", 401)
+        response.headers["WWW-Authenticate"] = 'Basic realm="Online Scrabble"'
         return response
 
     login_manager.unauthorized_handler(unauthorized_handler)

@@ -1,4 +1,5 @@
 from .bag import Bag
+from .character import Character
 from .game import Game, GameError, GameState
 from .grid import Grid
 from .placement import Placement, ScoredPlacement

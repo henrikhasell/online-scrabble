@@ -12,41 +12,37 @@ from .trie import Trie
 
 
 char_scores = {
-    'A': 1,
-    'B': 4,
-    'C': 4,
-    'D': 2,
-    'E': 1,
-    'F': 4,
-    'G': 3,
-    'H': 3,
-    'I': 1,
-    'J': 10,
-    'K': 5,
-    'L': 2,
-    'M': 4,
-    'N': 2,
-    'O': 1,
-    'P': 4,
-    'Q': 10,
-    'R': 1,
-    'S': 1,
-    'T': 1,
-    'U': 2,
-    'V': 5,
-    'W': 4,
-    'X': 8,
-    'Y': 3,
-    'Z': 10
+    "A": 1,
+    "B": 4,
+    "C": 4,
+    "D": 2,
+    "E": 1,
+    "F": 4,
+    "G": 3,
+    "H": 3,
+    "I": 1,
+    "J": 10,
+    "K": 5,
+    "L": 2,
+    "M": 4,
+    "N": 2,
+    "O": 1,
+    "P": 4,
+    "Q": 10,
+    "R": 1,
+    "S": 1,
+    "T": 1,
+    "U": 2,
+    "V": 5,
+    "W": 4,
+    "X": 8,
+    "Y": 3,
+    "Z": 10,
 }
 
 
 class SolutionBuilder:
-    def __init__(
-        self,
-        grid: Grid,
-        trie: Trie
-    ):
+    def __init__(self, grid: Grid, trie: Trie):
         self.grid = grid
         self.trie = trie
 
@@ -57,12 +53,7 @@ class SolutionBuilder:
         return len(word) == 1 or self.trie.contains(word)
 
     def score(
-        self,
-        grid: Grid,
-        x: int,
-        y: int,
-        horizontal: bool,
-        recursive: bool = True
+        self, grid: Grid, x: int, y: int, horizontal: bool, recursive: bool = True
     ) -> int:
 
         if horizontal:
@@ -97,8 +88,7 @@ class SolutionBuilder:
                     word_multiplier = 3
 
                 if recursive:
-                    adjacent_score += self.score(grid,
-                                                 x, y, not horizontal, False)
+                    adjacent_score += self.score(grid, x, y, not horizontal, False)
 
                 new_tile_count += 1
 
@@ -144,24 +134,15 @@ class SolutionBuilder:
 
         grid_copy = self.grid.copy()
 
-        placement = Placement(
-            insert_x,
-            insert_y,
-            horizontal,
-            letters
-        )
+        placement = Placement(insert_x, insert_y, horizontal, letters)
 
         grid_copy.insert(placement)
 
         score = self.score(grid_copy, anchor.x, anchor.y, horizontal)
 
-        self.placements += [ScoredPlacement(
-            insert_x,
-            insert_y,
-            horizontal,
-            letters,
-            score
-        )]
+        self.placements += [
+            ScoredPlacement(insert_x, insert_y, horizontal, letters, score)
+        ]
 
     def extend_right(
         self,
@@ -172,7 +153,7 @@ class SolutionBuilder:
         horizontal: bool,
         x: int,
         y: int,
-        limit: int
+        limit: int,
     ) -> None:
         edge = x >= self.grid.width - 1 or y >= self.grid.height - 1
 
@@ -205,21 +186,14 @@ class SolutionBuilder:
                         horizontal,
                         x,
                         y,
-                        limit
+                        limit,
                     )
         else:
             segment_continue = segment.find(tile_value)
 
             if segment_continue:
                 self.extend_right(
-                    rack,
-                    word,
-                    segment_continue,
-                    anchor,
-                    horizontal,
-                    x,
-                    y,
-                    limit
+                    rack, word, segment_continue, anchor, horizontal, x, y, limit
                 )
 
     def left_part(
@@ -229,11 +203,12 @@ class SolutionBuilder:
         segment: Trie,
         anchor: Anchor,
         horizontal: bool,
-        limit: int
+        limit: int,
     ):
         if self.cross_check(anchor.x, anchor.y, horizontal, segment.value):
-            self.extend_right(rack, word, segment, anchor,
-                              horizontal, anchor.x, anchor.y, limit)
+            self.extend_right(
+                rack, word, segment, anchor, horizontal, anchor.x, anchor.y, limit
+            )
 
         if limit > 0:
             for c in segment.children:
@@ -250,13 +225,14 @@ class SolutionBuilder:
                     segment.children[c],
                     anchor,
                     horizontal,
-                    limit - 1
+                    limit - 1,
                 )
 
-    def solve(self, rack: str) -> None:
+    def solve(self, rack: str) -> SortedList[Placement]:
         self.placements = SortedList()
 
         anchors = calculate_anchors(self.grid, self.trie)
+
         for anchor in anchors:
             for c in anchor.x_trie.children:
                 character, rack_copy = find_in_rack(rack, c)
@@ -270,7 +246,7 @@ class SolutionBuilder:
                     anchor.x_trie.children[c],
                     anchor,
                     True,
-                    anchor.x_length
+                    anchor.x_length,
                 )
 
             for c in anchor.y_trie.children:
@@ -285,7 +261,7 @@ class SolutionBuilder:
                     anchor.y_trie.children[c],
                     anchor,
                     False,
-                    anchor.y_length
+                    anchor.y_length,
                 )
 
         return self.placements

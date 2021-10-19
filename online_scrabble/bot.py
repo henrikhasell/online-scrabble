@@ -8,7 +8,7 @@ import requests
 from .game import GameState, Grid, Placement, ScoredPlacement, SolutionBuilder, Trie
 
 
-HOST="http://localhost:5000"
+HOST = "http://localhost:5000"
 
 GAME_NAME = "game1"
 
@@ -31,19 +31,15 @@ class ScrabbleBot:
         self.trie = Trie.load("dictionary.txt")
 
     def get_headers(self):
-        authorization = b64encode(
-            f'{self.name}:'.encode('utf-8')
-        ).decode('utf-8')
+        authorization = b64encode(f"{self.name}:".encode("utf-8")).decode("utf-8")
 
-        return {
-            'Authorization': authorization
-        }
+        return {"Authorization": authorization}
 
     def put_placement(self, game: str, placement: Placement):
         response = requests.put(
             f"{HOST}/game/{game}/placement",
             headers=self.get_headers(),
-            json=placement.json()
+            json=placement.json(),
         )
 
         response_json = response.json()
@@ -55,10 +51,7 @@ class ScrabbleBot:
         self.score = response_json["score"]
 
     def fetch_game(self, game: str):
-        response = requests.get(
-            f"{HOST}/game/{game}",
-            headers=self.get_headers()
-        )
+        response = requests.get(f"{HOST}/game/{game}", headers=self.get_headers())
 
         response_json = response.json()
 
@@ -67,17 +60,14 @@ class ScrabbleBot:
 
         self.state = GameState(response_json["state"])
         self.grid = Grid.from_json(response_json["grid"])
-        self.turn = response_json['turn']
+        self.turn = response_json["turn"]
         self.number_of_players = len(response_json["players"])
 
     def our_turn(self) -> bool:
         return self.state is GameState.InProgress and self.turn == self.name
 
     def create_game(self, game: str):
-        response = requests.post(
-            f"{HOST}/game/{game}",
-            headers=self.get_headers()
-        )
+        response = requests.post(f"{HOST}/game/{game}", headers=self.get_headers())
         response_json = response.json()
 
         message = response_json["message"]
@@ -88,10 +78,7 @@ class ScrabbleBot:
             raise BotError(message)
 
     def join_game(self, game: str):
-        response = requests.put(
-            f"{HOST}/game/{game}/join",
-            headers=self.get_headers()
-        )
+        response = requests.put(f"{HOST}/game/{game}/join", headers=self.get_headers())
 
         response_json = response.json()
 
@@ -103,8 +90,7 @@ class ScrabbleBot:
 
     def get_player_state(self, game: str):
         response = requests.put(
-            f"{HOST}/game/{game}/player_state",
-            headers=self.get_headers()
+            f"{HOST}/game/{game}/player_state", headers=self.get_headers()
         )
 
         response_json = response.json()
@@ -116,10 +102,7 @@ class ScrabbleBot:
         self.score = response_json["score"]
 
     def start_game(self, game: str):
-        response = requests.put(
-            f"{HOST}/game/{game}/start",
-            headers=self.get_headers()
-        )
+        response = requests.put(f"{HOST}/game/{game}/start", headers=self.get_headers())
 
         response_json = response.json()
 
@@ -136,7 +119,11 @@ class ScrabbleBot:
         return placements[-1]
 
     def work(self):
-        if self.turn is None and type(self.number_of_players) is int and self.number_of_players >= 2:
+        if (
+            self.turn is None
+            and type(self.number_of_players) is int
+            and self.number_of_players >= 2
+        ):
             try:
                 self.start_game(GAME_NAME)
             except BotError:
@@ -180,4 +167,3 @@ if __name__ == "__main__":
         except BotError as e:
             print(e)
         sleep(3)
-    

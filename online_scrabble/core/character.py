@@ -19,14 +19,12 @@ class Character:
         return self.value < other.value
 
     def json(self) -> dict:
-        return {
-            "value": self.value,
-            "wild": self.wild
-        }
+        return {"value": self.value, "wild": self.wild}
 
     @staticmethod
     def from_json(json_object: dict):
-        return Character(
-            json_object['value'],
-            json_object['wild']
-        )
+        return Character(json_object["value"], json_object["wild"])
+
+    @staticmethod
+    def from_string(input_: str):
+        return [Character(i, False) for i in input_]

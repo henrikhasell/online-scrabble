@@ -20,31 +20,23 @@ class GameError(Exception):
 
 
 class GameState(Enum):
-    WaitingToStart='waiting_to_start'
-    InProgress='in_progress'
-    Completed='completed'
+    WaitingToStart = "waiting_to_start"
+    InProgress = "in_progress"
+    Completed = "completed"
 
 
 class PreviousPlacement:
-    def __init__(
-        self,
-        placement: ScoredPlacement,
-        player: str
-    ):
+    def __init__(self, placement: ScoredPlacement, player: str):
         self.placement = placement
         self.player = player
 
     def json(self):
-        return {
-            'placement': self.placement.json(),
-            'player': self.player
-        }
+        return {"placement": self.placement.json(), "player": self.player}
 
     @staticmethod
     def from_json(json_data: dict):
         return PreviousPlacement(
-            ScoredPlacement.from_json(json_data['placement']),
-            json_data['player']
+            ScoredPlacement.from_json(json_data["placement"]), json_data["player"]
         )
 
 
@@ -56,7 +48,7 @@ class Game:
         players: List[Player],
         state: GameState,
         turn: Optional[str],
-        previous_placement: Optional[PreviousPlacement]
+        previous_placement: Optional[PreviousPlacement],
     ):
         self.bag = bag
         self.grid = grid
@@ -73,29 +65,26 @@ class Game:
 
     def json(self) -> dict:
         return {
-            'bag': self.bag.json(),
-            'grid': self.grid.json(),
-            'players': [i.json() for i in self.players],
-            'state': self.state.value,
-            'turn': self.turn,
-            'previous_placement': self.previous_placement and self.previous_placement.json()
+            "bag": self.bag.json(),
+            "grid": self.grid.json(),
+            "players": [i.json() for i in self.players],
+            "state": self.state.value,
+            "turn": self.turn,
+            "previous_placement": self.previous_placement
+            and self.previous_placement.json(),
         }
 
     def join(self, player_name: str) -> Player:
         if self.state != GameState.WaitingToStart:
-            raise GameError('The game is in progress.')
+            raise GameError("The game is in progress.")
 
         if len(self.players) >= MAX_PLAYERS:
-            raise GameError('The game is full.')
+            raise GameError("The game is full.")
 
         if player_name in (i.name for i in self.players):
-            raise GameError('You already joined this game.')
+            raise GameError("You already joined this game.")
 
-        new_player = Player(
-            player_name,
-            populate_rack('', self.bag),
-            0
-        )
+        new_player = Player(player_name, populate_rack("", self.bag), 0)
 
         self.players += [new_player]
 
@@ -103,10 +92,10 @@ class Game:
 
     def start(self, player_name: str) -> Player:
         if player_name not in (i.name for i in self.players):
-            raise GameError('You must be in the game to start it.')
+            raise GameError("You must be in the game to start it.")
 
         if self.state != GameState.WaitingToStart:
-            raise GameError('The game is in progress.')
+            raise GameError("The game is in progress.")
 
         self.state = GameState.InProgress
         self.turn = self.players[0].name
@@ -115,7 +104,7 @@ class Game:
         player = next((i for i in self.players if i.name == player_name), None)
 
         if player is None:
-            raise GameError('Player not in game.')
+            raise GameError("Player not in game.")
 
         return player
 
@@ -129,7 +118,9 @@ class Game:
 
         return self.players[index + 1]
 
-    def score_placement(self, player_name: str, placemnt: Placement, trie: Trie) -> ScoredPlacement:
+    def score_placement(
+        self, player_name: str, placemnt: Placement, trie: Trie
+    ) -> ScoredPlacement:
         grid_copy = self.grid.copy()
         grid_copy.reset_crosscheck()
 
@@ -145,7 +136,6 @@ class Game:
         except StopIteration:
             raise GameError("Invalid placement.")
 
-        
     def insert(self, player_name: str, placement: Placement, trie: Trie) -> None:
         if player_name != self.turn:
             raise GameError("It's not your turn.")
@@ -159,7 +149,7 @@ class Game:
 
         for letter in placement.letters:
             letter = WILD_LETTER if letter.wild else letter.value
-            player.rack = player.rack.replace(letter, '', 1)
+            player.rack = player.rack.replace(letter, "", 1)
 
         player.rack = populate_rack(player.rack, self.bag)
         player.score += scored_placement.score
@@ -167,10 +157,7 @@ class Game:
         self.grid.insert(scored_placement)
         self.turn = self.get_next_player().name
 
-        self.previous_placement = PreviousPlacement(
-            scored_placement,
-            player_name
-        )
+        self.previous_placement = PreviousPlacement(scored_placement, player_name)
 
         if len(player.rack) == 0:
             self.end_game()
@@ -184,4 +171,3 @@ class Game:
         bag = Bag.new()
         grid = Grid.large()
         return Game(bag, grid, [], GameState.WaitingToStart, None, None)
-

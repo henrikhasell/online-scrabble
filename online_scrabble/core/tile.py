@@ -5,12 +5,12 @@ from colorama import Back
 
 
 class TileType(Enum):
-    Normal = 'normal'
-    DoubleLetter = 'double_letter'
-    DoubleWord = 'double_word'
-    TripleLetter = 'triple_letter'
-    TripleWord = 'triple_word'
-    Start = 'start'
+    Normal = "normal"
+    DoubleLetter = "double_letter"
+    DoubleWord = "double_word"
+    TripleLetter = "triple_letter"
+    TripleWord = "triple_word"
+    Start = "start"
 
 
 colour_map = {
@@ -25,11 +25,8 @@ colour_map = {
 
 class Tile:
     def __init__(
-            self,
-            type: TileType,
-            value: Optional[str],
-            wild: bool,
-            cross_check: bool):
+        self, type: TileType, value: Optional[str], wild: bool, cross_check: bool
+    ):
         self.type = type
         self.value = value
         self.wild = wild
@@ -37,10 +34,10 @@ class Tile:
 
     def json(self) -> dict:
         return {
-            'type': self.type.value,
-            'value': self.value,
-            'wild': self.wild,
-            'cross_check': self.cross_check
+            "type": self.type.value,
+            "value": self.value,
+            "wild": self.wild,
+            "cross_check": self.cross_check,
         }
 
     def __str__(self) -> str:
@@ -50,8 +47,8 @@ class Tile:
     @staticmethod
     def from_json(json_data):
         return Tile(
-            TileType(json_data['type']),
-            json_data['value'],
-            json_data['wild'],
-            json_data['cross_check']
+            TileType(json_data["type"]),
+            json_data["value"],
+            json_data["wild"],
+            json_data["cross_check"],
         )

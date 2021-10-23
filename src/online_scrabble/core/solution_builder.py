@@ -45,6 +45,7 @@ class SolutionBuilder:
     def __init__(self, grid: Grid, trie: Trie):
         self.grid = grid
         self.trie = trie
+        self.placements = SortedList()
 
     def cross_check(self, x: int, y: int, horizontal: bool, char: str) -> bool:
         grid_copy = self.grid.copy()
@@ -53,8 +54,12 @@ class SolutionBuilder:
         return len(word) == 1 or self.trie.contains(word)
 
     def score(
-        self, grid: Grid, x: int, y: int, horizontal: bool, recursive: bool = True
-    ) -> int:
+            self,
+            grid: Grid,
+            x: int,
+            y: int,
+            horizontal: bool,
+            recursive: bool = True) -> int:
 
         if horizontal:
             while x > 0 and grid.get_tile(x - 1, y).value:
@@ -78,17 +83,18 @@ class SolutionBuilder:
             tile_multiplier = 1
 
             if tile.cross_check:
-                if tile.type == TileType.DoubleLetter:
+                if tile.type == TileType.DOUBLE_LETTER:
                     tile_multiplier = 2
-                elif tile.type == TileType.TripleLetter:
+                elif tile.type == TileType.TRIPPLE_LETTER:
                     tile_multiplier = 3
-                elif tile.type == TileType.DoubleWord:
+                elif tile.type == TileType.DOUBLE_WORD:
                     word_multiplier = 2
-                elif tile.type == TileType.TripleWord:
+                elif tile.type == TileType.TRIPPLE_WORD:
                     word_multiplier = 3
 
                 if recursive:
-                    adjacent_score += self.score(grid, x, y, not horizontal, False)
+                    adjacent_score += self.score(grid,
+                                                 x, y, not horizontal, False)
 
                 new_tile_count += 1
 
@@ -170,8 +176,8 @@ class SolutionBuilder:
                 self.legal_move(word, anchor, horizontal, limit)
             if edge:
                 return
-            for c in segment.children:
-                character, rack_copy = find_in_rack(rack, c)
+            for child in segment.children:
+                character, rack_copy = find_in_rack(rack, child)
                 if not character:
                     continue
 
@@ -181,7 +187,7 @@ class SolutionBuilder:
                     self.extend_right(
                         rack_copy,
                         word_copy,
-                        segment.children[c],
+                        segment.children[child],
                         anchor,
                         horizontal,
                         x,
@@ -193,8 +199,14 @@ class SolutionBuilder:
 
             if segment_continue:
                 self.extend_right(
-                    rack, word, segment_continue, anchor, horizontal, x, y, limit
-                )
+                    rack,
+                    word,
+                    segment_continue,
+                    anchor,
+                    horizontal,
+                    x,
+                    y,
+                    limit)
 
     def left_part(
         self,
@@ -207,12 +219,18 @@ class SolutionBuilder:
     ):
         if self.cross_check(anchor.x, anchor.y, horizontal, segment.value):
             self.extend_right(
-                rack, word, segment, anchor, horizontal, anchor.x, anchor.y, limit
-            )
+                rack,
+                word,
+                segment,
+                anchor,
+                horizontal,
+                anchor.x,
+                anchor.y,
+                limit)
 
         if limit > 0:
-            for c in segment.children:
-                character, rack_copy = find_in_rack(rack, c)
+            for child, value in segment.children.items():
+                character, rack_copy = find_in_rack(rack, child)
 
                 if not character:
                     continue
@@ -222,7 +240,7 @@ class SolutionBuilder:
                 self.left_part(
                     rack_copy,
                     word_copy,
-                    segment.children[c],
+                    value,
                     anchor,
                     horizontal,
                     limit - 1,
@@ -234,8 +252,8 @@ class SolutionBuilder:
         anchors = calculate_anchors(self.grid, self.trie)
 
         for anchor in anchors:
-            for c in anchor.x_trie.children:
-                character, rack_copy = find_in_rack(rack, c)
+            for key, value in anchor.x_trie.children.items():
+                character, rack_copy = find_in_rack(rack, key)
 
                 if not character:
                     continue
@@ -243,14 +261,14 @@ class SolutionBuilder:
                 self.left_part(
                     rack_copy,
                     [character],
-                    anchor.x_trie.children[c],
+                    value,
                     anchor,
                     True,
                     anchor.x_length,
                 )
 
-            for c in anchor.y_trie.children:
-                character, rack_copy = find_in_rack(rack, c)
+            for key, value in anchor.y_trie.children.items():
+                character, rack_copy = find_in_rack(rack, key)
 
                 if not character:
                     continue
@@ -258,7 +276,7 @@ class SolutionBuilder:
                 self.left_part(
                     rack_copy,
                     [character],
-                    anchor.y_trie.children[c],
+                    value,
                     anchor,
                     False,
                     anchor.y_length,

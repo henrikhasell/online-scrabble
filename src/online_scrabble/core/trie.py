@@ -23,10 +23,11 @@ class Trie:
 
         if char not in self.children:
             return None
-        elif len(word) > 1:
+
+        if len(word) > 1:
             return self.children[char].find(word[1:])
-        else:
-            return self.children[char]
+
+        return self.children[char]
 
     def contains(self, word: str) -> bool:
         trie = self.find(word)
@@ -44,8 +45,8 @@ class Trie:
     def load(path: str):
         trie = Trie()
 
-        with open(path) as f:
-            for word in [i[:-1] for i in f]:
+        with open(path, encoding="utf-8") as dictionary:
+            for word in [i[:-1] for i in dictionary]:
                 trie.insert(word)
 
         return trie

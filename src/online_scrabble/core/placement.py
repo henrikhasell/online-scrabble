@@ -1,12 +1,17 @@
 from functools import total_ordering
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 from .character import Character
 
 
 @total_ordering
 class Placement:
-    def __init__(self, x: int, y: int, horizontal: bool, letters: List[Character]):
+    def __init__(
+            self,
+            x: int,
+            y: int,
+            horizontal: bool,
+            letters: List[Character]):
         self.x = x
         self.y = y
         self.horizontal = horizontal
@@ -55,8 +60,12 @@ def get_score(placement: Placement) -> Optional[int]:
 
 class ScoredPlacement(Placement):
     def __init__(
-        self, x: int, y: int, horizontal: bool, letters: List[Character], score: int
-    ):
+            self,
+            x: int,
+            y: int,
+            horizontal: bool,
+            letters: List[Character],
+            score: int):
         super().__init__(x, y, horizontal, letters)
         self.score = score
 

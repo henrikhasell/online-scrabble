@@ -1,28 +1,26 @@
-import json
 from enum import Enum
 from typing import List, Optional
 
-from .bag import Bag, BagError, WILD_LETTER
-from .grid import Grid
-from .placement import Placement, ScoredPlacement
-from .player import Player
-from .solution_builder import SolutionBuilder
-from .rack import populate_rack, remove_index_from_rack
-from .trie import Trie
+from online_scrabble.core.bag import Bag, WILD_LETTER
+from online_scrabble.core.grid import Grid
+from online_scrabble.core.placement import Placement, ScoredPlacement
+from online_scrabble.core.player import Player
+from online_scrabble.core.solution_builder import SolutionBuilder
+from online_scrabble.core.rack import populate_rack
+from online_scrabble.core.trie import Trie
 
 
 MAX_PLAYERS = 4
 
 
 class GameError(Exception):
-    def __init__(self, message: str):
-        super().__init__(message)
+    pass
 
 
 class GameState(Enum):
-    WaitingToStart = "waiting_to_start"
-    InProgress = "in_progress"
-    Completed = "completed"
+    WAITING_TO_START = "waiting_to_start"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
 
 
 class PreviousPlacement:
@@ -36,7 +34,8 @@ class PreviousPlacement:
     @staticmethod
     def from_json(json_data: dict):
         return PreviousPlacement(
-            ScoredPlacement.from_json(json_data["placement"]), json_data["player"]
+            ScoredPlacement.from_json(
+                json_data["placement"]), json_data["player"]
         )
 
 
@@ -75,7 +74,7 @@ class Game:
         }
 
     def join(self, player_name: str) -> Player:
-        if self.state != GameState.WaitingToStart:
+        if self.state != GameState.WAITING_TO_START:
             raise GameError("The game is in progress.")
 
         if len(self.players) >= MAX_PLAYERS:
@@ -94,10 +93,10 @@ class Game:
         if player_name not in (i.name for i in self.players):
             raise GameError("You must be in the game to start it.")
 
-        if self.state != GameState.WaitingToStart:
+        if self.state != GameState.WAITING_TO_START:
             raise GameError("The game is in progress.")
 
-        self.state = GameState.InProgress
+        self.state = GameState.IN_PROGRESS
         self.turn = self.players[0].name
 
     def get_player(self, player_name: str) -> Player:
@@ -109,9 +108,14 @@ class Game:
         return player
 
     def get_next_player(self) -> Player:
+        index = None
+
         for index, player in enumerate(self.players):
             if player.name == self.turn:
                 break
+
+        if index is None:
+            return None
 
         if index == len(self.players) - 1:
             return self.players[0]
@@ -133,14 +137,18 @@ class Game:
 
         try:
             return next(expression)
-        except StopIteration:
-            raise GameError("Invalid placement.")
+        except StopIteration as exception:
+            raise GameError("Invalid placement.") from exception
 
-    def insert(self, player_name: str, placement: Placement, trie: Trie) -> None:
+    def insert(
+            self,
+            player_name: str,
+            placement: Placement,
+            trie: Trie) -> None:
         if player_name != self.turn:
             raise GameError("It's not your turn.")
 
-        if self.state != GameState.InProgress:
+        if self.state != GameState.IN_PROGRESS:
             raise GameError("Game is not in progress.")
 
         scored_placement = self.score_placement(player_name, placement, trie)
@@ -157,17 +165,18 @@ class Game:
         self.grid.insert(scored_placement)
         self.turn = self.get_next_player().name
 
-        self.previous_placement = PreviousPlacement(scored_placement, player_name)
+        self.previous_placement = PreviousPlacement(
+            scored_placement, player_name)
 
         if len(player.rack) == 0:
             self.end_game()
 
     def end_game(self):
-        self.state = GameState.Completed
+        self.state = GameState.COMPLETED
         self.turn = max(self.players, key=lambda i: i.score).name
 
     @staticmethod
     def new():
         bag = Bag.new()
         grid = Grid.large()
-        return Game(bag, grid, [], GameState.WaitingToStart, None, None)
+        return Game(bag, grid, [], GameState.WAITING_TO_START, None, None)

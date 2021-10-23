@@ -5,29 +5,32 @@ from colorama import Back
 
 
 class TileType(Enum):
-    Normal = "normal"
-    DoubleLetter = "double_letter"
-    DoubleWord = "double_word"
-    TripleLetter = "triple_letter"
-    TripleWord = "triple_word"
-    Start = "start"
+    NOMRAL = "normal"
+    DOUBLE_LETTER = "double_letter"
+    DOUBLE_WORD = "double_word"
+    TRIPPLE_LETTER = "triple_letter"
+    TRIPPLE_WORD = "triple_word"
+    START = "start"
 
 
 colour_map = {
-    TileType.Normal: Back.LIGHTBLACK_EX,
-    TileType.DoubleLetter: Back.LIGHTBLUE_EX,
-    TileType.DoubleWord: Back.LIGHTRED_EX,
-    TileType.TripleLetter: Back.LIGHTGREEN_EX,
-    TileType.TripleWord: Back.LIGHTYELLOW_EX,
-    TileType.Start: Back.LIGHTMAGENTA_EX,
+    TileType.NOMRAL: Back.LIGHTBLACK_EX,
+    TileType.DOUBLE_LETTER: Back.LIGHTBLUE_EX,
+    TileType.DOUBLE_WORD: Back.LIGHTRED_EX,
+    TileType.TRIPPLE_LETTER: Back.LIGHTGREEN_EX,
+    TileType.TRIPPLE_WORD: Back.LIGHTYELLOW_EX,
+    TileType.START: Back.LIGHTMAGENTA_EX,
 }
 
 
 class Tile:
     def __init__(
-        self, type: TileType, value: Optional[str], wild: bool, cross_check: bool
-    ):
-        self.type = type
+            self,
+            type_: TileType,
+            value: Optional[str],
+            wild: bool,
+            cross_check: bool):
+        self.type = type_
         self.value = value
         self.wild = wild
         self.cross_check = cross_check

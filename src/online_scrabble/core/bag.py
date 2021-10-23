@@ -1,13 +1,12 @@
 from random import randrange
-from typing import List, Optional
+from typing import List
 
 
 WILD_LETTER = " "
 
 
 class BagError(Exception):
-    def __init__(self, message: str):
-        super().__init__(message)
+    pass
 
 
 class Bag:
@@ -15,14 +14,14 @@ class Bag:
         self.content = content
 
     def add_character(self, char: str, count: int) -> None:
-        for c in char * count:
-            self.content += [c]
+        for _index in range(count):
+            self.content += [char]
 
     def get_character(self) -> str:
         try:
             index = randrange(len(self.content))
-        except ValueError:
-            raise BagError("The bag is empty.")
+        except ValueError as error:
+            raise BagError("The bag is empty.") from error
         return self.content.pop(index)
 
     def json(self):

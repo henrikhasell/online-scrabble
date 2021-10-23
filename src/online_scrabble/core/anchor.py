@@ -1,30 +1,29 @@
+from dataclasses import dataclass
 from typing import List, Optional
 
 from .grid import Grid
 from .trie import Trie
 
 
+@dataclass
 class Anchor:
-    def __init__(
-        self, x: int, y: int, x_length: int, y_length: int, x_trie: Trie, y_trie: Trie
-    ):
-        self.x = x
-        self.y = y
-        self.x_length = x_length
-        self.y_length = y_length
-        self.x_trie = x_trie
-        self.y_trie = y_trie
+    x: int
+    y: int
+    x_length: int
+    y_length: int
+    x_trie: Trie
+    y_trie: Trie
 
 
 def is_anchor(grid: Grid, x: int, y: int) -> bool:
-    if grid.get_tile(x, y).value == None:
-        if x > 0 and grid.get_tile(x - 1, y).value != None:
+    if grid.get_tile(x, y).value is None:
+        if x > 0 and grid.get_tile(x - 1, y).value is not None:
             return True
-        if y > 0 and grid.get_tile(x, y - 1).value != None:
+        if y > 0 and grid.get_tile(x, y - 1).value is not None:
             return True
-        if x < (grid.width - 1) and grid.get_tile(x + 1, y).value != None:
+        if x < (grid.width - 1) and grid.get_tile(x + 1, y).value is not None:
             return True
-        if y < (grid.height - 1) and grid.get_tile(x, y + 1).value != None:
+        if y < (grid.height - 1) and grid.get_tile(x, y + 1).value is not None:
             return True
     return False
 

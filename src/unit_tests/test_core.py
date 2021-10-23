@@ -1,3 +1,4 @@
+# pylint: disable=redefined-outer-name
 import pytest
 
 from online_scrabble.core import Bag, Character, Grid, Placement, Trie, SolutionBuilder
@@ -24,14 +25,14 @@ def solution_builder(grid, trie):
 
 
 def test_trie_has_word(trie):
-    assert True == trie.contains("avocado")
+    assert trie.contains("avocado") is True
 
 
 def test_trie_no_substring(trie):
-    assert False == trie.contains("avoc")
+    assert trie.contains("avoc") is False
 
 
-def test_starting_move(solution_builder, trie):
+def test_starting_move(solution_builder):
     placements = solution_builder.solve("AVOCADO")
     assert placements[-1].score == 65
 
@@ -43,10 +44,10 @@ def test_grid_placement_and_fetching(grid):
 
     print(grid)
 
-    assert "MONKEY" == grid.get_word(7, 7, True)
-    assert "MONKEY" == grid.get_word(7, 7, False)
-    assert "MONKEY" == grid.get_word(12, 7, True)
-    assert "MONKEY" == grid.get_word(7, 12, False)
+    assert grid.get_word(7, 7, True) == "MONKEY"
+    assert grid.get_word(7, 7, False) == "MONKEY"
+    assert grid.get_word(12, 7, True) == "MONKEY"
+    assert grid.get_word(7, 12, False) == "MONKEY"
 
-    assert "" == grid.get_word(13, 7, True)
-    assert "" == grid.get_word(7, 13, False)
+    assert grid.get_word(13, 7, True) == ""
+    assert grid.get_word(7, 13, False) == ""

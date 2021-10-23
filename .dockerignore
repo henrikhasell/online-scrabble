@@ -1,0 +1,6 @@
+*
+!dictionary.txt
+!requirements-dev.txt
+!requirements.txt
+!src
+src/**/__pycache__

@@ -4,15 +4,15 @@ from flask import abort, Flask
 from flask_login import current_user, LoginManager
 from flask_restx import Api, fields, marshal, Resource
 
-from .core import (
+from online_scrabble.core import (
     Placement,
     Player,
     ScoredPlacement,
     Trie,
 )
-from .decorators import api_login_required
-from .game import Game, GameError
-from .login import create_request_loader, create_unauthorized_handler
+from online_scrabble.web.decorators import api_login_required
+from online_scrabble.web.game import Game, GameError
+from online_scrabble.web.login import create_request_loader, create_unauthorized_handler
 
 
 app = Flask(__name__)

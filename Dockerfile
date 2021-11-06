@@ -18,4 +18,4 @@ RUN PYTHONPATH=${PWD} pytest --cov online_scrabble unit_tests
 
 FROM base
 
-ENTRYPOINT ["bash"]
+ENTRYPOINT ["gunicorn", "-b", "0.0.0.0:8000", "online_scrabble.web.__main__:app"]

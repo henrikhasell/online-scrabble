@@ -34,8 +34,7 @@ class PreviousPlacement:
     @staticmethod
     def from_json(json_data: dict):
         return PreviousPlacement(
-            ScoredPlacement.from_json(
-                json_data["placement"]), json_data["player"]
+            ScoredPlacement.from_json(json_data["placement"]), json_data["player"]
         )
 
 
@@ -140,11 +139,7 @@ class Game:
         except StopIteration as exception:
             raise GameError("Invalid placement.") from exception
 
-    def insert(
-            self,
-            player_name: str,
-            placement: Placement,
-            trie: Trie) -> None:
+    def insert(self, player_name: str, placement: Placement, trie: Trie) -> None:
         if player_name != self.turn:
             raise GameError("It's not your turn.")
 
@@ -165,8 +160,7 @@ class Game:
         self.grid.insert(scored_placement)
         self.turn = self.get_next_player().name
 
-        self.previous_placement = PreviousPlacement(
-            scored_placement, player_name)
+        self.previous_placement = PreviousPlacement(scored_placement, player_name)
 
         if len(player.rack) == 0:
             self.end_game()

@@ -25,11 +25,8 @@ colour_map = {
 
 class Tile:
     def __init__(
-            self,
-            type_: TileType,
-            value: Optional[str],
-            wild: bool,
-            cross_check: bool):
+        self, type_: TileType, value: Optional[str], wild: bool, cross_check: bool
+    ):
         self.type = type_
         self.value = value
         self.wild = wild

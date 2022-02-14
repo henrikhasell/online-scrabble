@@ -90,8 +90,9 @@ class Grid:
                 y += 1
 
     def copy(self):
-        tiles = list(map(lambda i: Tile(i.type, i.value,
-                                        i.wild, i.cross_check), self.tiles))
+        tiles = list(
+            map(lambda i: Tile(i.type, i.value, i.wild, i.cross_check), self.tiles)
+        )
         return Grid(self.width, self.height, tiles)
 
     def reset_crosscheck(self):

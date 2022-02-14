@@ -17,7 +17,7 @@ def populate_rack(rack: str, bag: Bag) -> str:
 
 
 def remove_index_from_rack(rack: str, index: int) -> str:
-    return rack[:index] + rack[index + 1:]
+    return rack[:index] + rack[index + 1 :]
 
 
 def find_wild_in_rack(rack: str, char: str) -> Tuple[Optional[Character], str]:

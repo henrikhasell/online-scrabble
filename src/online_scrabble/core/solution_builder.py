@@ -54,12 +54,8 @@ class SolutionBuilder:
         return len(word) == 1 or self.trie.contains(word)
 
     def score(
-            self,
-            grid: Grid,
-            x: int,
-            y: int,
-            horizontal: bool,
-            recursive: bool = True) -> int:
+        self, grid: Grid, x: int, y: int, horizontal: bool, recursive: bool = True
+    ) -> int:
 
         if horizontal:
             while x > 0 and grid.get_tile(x - 1, y).value:
@@ -93,8 +89,7 @@ class SolutionBuilder:
                     word_multiplier = 3
 
                 if recursive:
-                    adjacent_score += self.score(grid,
-                                                 x, y, not horizontal, False)
+                    adjacent_score += self.score(grid, x, y, not horizontal, False)
 
                 new_tile_count += 1
 
@@ -199,14 +194,8 @@ class SolutionBuilder:
 
             if segment_continue:
                 self.extend_right(
-                    rack,
-                    word,
-                    segment_continue,
-                    anchor,
-                    horizontal,
-                    x,
-                    y,
-                    limit)
+                    rack, word, segment_continue, anchor, horizontal, x, y, limit
+                )
 
     def left_part(
         self,
@@ -219,14 +208,8 @@ class SolutionBuilder:
     ):
         if self.cross_check(anchor.x, anchor.y, horizontal, segment.value):
             self.extend_right(
-                rack,
-                word,
-                segment,
-                anchor,
-                horizontal,
-                anchor.x,
-                anchor.y,
-                limit)
+                rack, word, segment, anchor, horizontal, anchor.x, anchor.y, limit
+            )
 
         if limit > 0:
             for child, value in segment.children.items():

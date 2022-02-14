@@ -9,10 +9,7 @@ class Player:
         self.score = score
 
     def json(self) -> dict:
-        return {
-            "name": self.name,
-            "rack": list(self.rack),
-            "score": self.score}
+        return {"name": self.name, "rack": list(self.rack), "score": self.score}
 
     def __eq__(self, other) -> bool:
         return self.name == other.name

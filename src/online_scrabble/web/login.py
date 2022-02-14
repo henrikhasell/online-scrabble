@@ -11,7 +11,7 @@ class User(UserMixin):
 
 
 def create_request_loader(login_manager: LoginManager) -> Callable:
-    def request_loader(request: Request) -> Optional[str]:
+    def request_loader(request: Request) -> Optional[User]:
         api_key = request.headers.get("Authorization")
 
         if not api_key:
@@ -24,12 +24,9 @@ def create_request_loader(login_manager: LoginManager) -> Callable:
         except UnicodeDecodeError:
             return None
 
-        try:
-            username, _ = api_key.split(":", 1)
-        except TypeError:
-            return None
+        username, _password = api_key.split(":", 1)
 
-        return User(username) or None
+        return User(username)
 
     login_manager.request_loader(request_loader)
     return request_loader

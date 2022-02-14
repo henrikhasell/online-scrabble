@@ -70,12 +70,13 @@ model_player = api.model(
 )
 
 model_grid = api.model(
-    "Grid", {
-        "tiles": fields.List(
-            fields.Nested(
-                model_tile, required=True), required=True), "width": fields.Integer(
-                    required=True), "height": fields.Integer(
-                        required=True), }, )
+    "Grid",
+    {
+        "tiles": fields.List(fields.Nested(model_tile, required=True), required=True),
+        "width": fields.Integer(required=True),
+        "height": fields.Integer(required=True),
+    },
+)
 
 model_character = api.model(
     "Character",
@@ -100,8 +101,7 @@ model_placement = api.model(
 
 
 model_scored_placement = api.inherit(
-    "ScoredPlacement", model_placement, {
-        "score": fields.Integer(required=True)}
+    "ScoredPlacement", model_placement, {"score": fields.Integer(required=True)}
 )
 
 
@@ -132,11 +132,12 @@ model_game = api.model(
 model_message = api.model("Message", {"message": fields.String(required=True)})
 
 model_player_state = api.model(
-    "PlayerState", {
-        "rack": fields.List(
-            fields.String(
-                example="A", required=True), required=True), "score": fields.Integer(
-                    required=True), }, )
+    "PlayerState",
+    {
+        "rack": fields.List(fields.String(example="A", required=True), required=True),
+        "score": fields.Integer(required=True),
+    },
+)
 
 model_game_and_player_state = api.model(
     "GameAndPlayerState",
@@ -175,8 +176,7 @@ def score_placement(id: str, placement: Placement) -> ScoredPlacement:
     game = get_game(id)
 
     try:
-        return game.score_placement(
-            current_user.get_id(), placement, dictionary)
+        return game.score_placement(current_user.get_id(), placement, dictionary)
     except GameError as error:
         abort(400, str(error))
 
@@ -338,11 +338,7 @@ class ActionScorePlacement(Resource):
     )
     def put(self, id_: str):
         placement = Placement.from_json(api.payload)
-        return marshal(
-            score_placement(
-                id_,
-                placement).json(),
-            model_scored_placement)
+        return marshal(score_placement(id_, placement).json(), model_scored_placement)
 
 
 if __name__ == "__main__":

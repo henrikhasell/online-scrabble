@@ -14,6 +14,7 @@ RUN pip install -r requirements-dev.txt
 
 COPY src/unit_tests ./unit_tests
 
+RUN black --check .
 RUN PYTHONPATH=${PWD} pytest --cov online_scrabble unit_tests
 
 FROM base

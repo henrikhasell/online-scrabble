@@ -1,16 +1,23 @@
 import argparse
 from base64 import b64encode
+from enum import Enum
 from time import sleep
 from typing import List, Optional
 
 import requests
 
-from .game import GameState, Grid, Placement, ScoredPlacement, SolutionBuilder, Trie
+from online_scrabble.core import Grid, Placement, ScoredPlacement, SolutionBuilder, Trie
 
 
-HOST = "http://localhost:5000"
+HOST = "http://localhost:8000"
 
 GAME_NAME = "game1"
+
+
+class GameState(Enum):
+    InProgress = "in_progress"
+    WaitingToStart = "waiting_to_start"
+    Completed = "completed"
 
 
 class BotError(Exception):
@@ -49,10 +56,10 @@ class ScrabbleBot:
 
         self.rack = response_json["rack"]
         self.score = response_json["score"]
+        print(placement.json())
 
     def fetch_game(self, game: str):
         response = requests.get(f"{HOST}/game/{game}", headers=self.get_headers())
-
         response_json = response.json()
 
         if "message" in response_json:
@@ -118,28 +125,27 @@ class ScrabbleBot:
 
         return placements[-1]
 
-    def work(self):
+    def work(self, game: str):
         if (
             self.turn is None
             and type(self.number_of_players) is int
             and self.number_of_players >= 2
         ):
             try:
-                self.start_game(GAME_NAME)
+                self.start_game(game)
             except BotError:
                 pass
 
-        self.fetch_game(GAME_NAME)
+        self.fetch_game(game)
 
         if self.our_turn():
             if self.rack is None:
-                self.get_player_state(GAME_NAME)
+                self.get_player_state(game)
 
-            print(self.rack)
             placement = self.get_highest_scoring_move(self.rack)
 
             if placement is not None:
-                self.put_placement(GAME_NAME, placement)
+                self.put_placement(game, placement)
             else:
                 print("No valid placement found.")
 
@@ -150,6 +156,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     scrabble_bot = ScrabbleBot(args.name)
+    print(f"Creating + joining {GAME_NAME}...")
 
     try:
         scrabble_bot.create_game(GAME_NAME)
@@ -163,7 +170,6 @@ if __name__ == "__main__":
 
     while True:
         try:
-            scrabble_bot.work()
+            scrabble_bot.work(GAME_NAME)
         except BotError as e:
             print(e)
-        sleep(3)

@@ -1,7 +1,10 @@
 # pylint: disable=redefined-outer-name
+import random
+
 import pytest
 
 from online_scrabble.core import Bag, Character, Grid, Placement, Trie, SolutionBuilder
+from online_scrabble.core.rack import populate_rack, remove_letters_from_rack
 
 
 @pytest.fixture
@@ -51,3 +54,20 @@ def test_grid_placement_and_fetching(grid):
 
     assert grid.get_word(13, 7, True) == ""
     assert grid.get_word(7, 13, False) == ""
+
+
+def test_solution_builder(bag, grid, solution_builder):
+    random.seed(322)
+
+    rack: str = ""
+
+    for i in range(18):
+        rack = populate_rack(rack, bag)
+        placement_list = solution_builder.solve(rack)
+
+        placement = placement_list[-1]
+        grid.insert(placement)
+
+        rack = remove_letters_from_rack(rack, placement.letters)
+
+    print(grid)

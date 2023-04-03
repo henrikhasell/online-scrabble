@@ -56,7 +56,6 @@ class SolutionBuilder:
     def score(
         self, grid: Grid, x: int, y: int, horizontal: bool, recursive: bool = True
     ) -> int:
-
         if horizontal:
             while x > 0 and grid.get_tile(x - 1, y).value:
                 x -= 1

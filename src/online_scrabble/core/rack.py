@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 
 from .bag import Bag, BagError, WILD_LETTER
 from .character import Character
@@ -13,6 +13,13 @@ def populate_rack(rack: str, bag: Bag) -> str:
             rack += bag.get_character()
     except BagError:
         pass
+    return rack
+
+
+def remove_letters_from_rack(rack: str, letters: List[Character]) -> str:
+    for letter in letters:
+        value = WILD_LETTER if letter.wild else letter.value
+        rack = rack.replace(value, "", 1)
     return rack
 
 

@@ -1,12 +1,12 @@
 from enum import Enum
 from typing import List, Optional
 
-from online_scrabble.core.bag import Bag, WILD_LETTER
+from online_scrabble.core.bag import Bag
 from online_scrabble.core.grid import Grid
 from online_scrabble.core.placement import Placement, ScoredPlacement
 from online_scrabble.core.player import Player
 from online_scrabble.core.solution_builder import SolutionBuilder
-from online_scrabble.core.rack import populate_rack
+from online_scrabble.core.rack import populate_rack, remove_letters_from_rack
 from online_scrabble.core.trie import Trie
 
 
@@ -150,11 +150,9 @@ class Game:
 
         player = self.get_player(player_name)
 
-        for letter in placement.letters:
-            letter = WILD_LETTER if letter.wild else letter.value
-            player.rack = player.rack.replace(letter, "", 1)
-
+        player.rack = remove_letters_from_rack(rack, placement.letters)
         player.rack = populate_rack(player.rack, self.bag)
+
         player.score += scored_placement.score
 
         self.grid.insert(scored_placement)

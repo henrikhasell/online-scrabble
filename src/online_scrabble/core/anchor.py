@@ -41,22 +41,22 @@ def create_anchor(grid: Grid, trie: Trie, x: int, y: int) -> Optional[Anchor]:
     x_trie = trie
     y_trie = trie
 
-    for i in range(x - 1, 0, -1):
+    for i in range(x - 1, -1, -1):
         if grid.get_tile(i, y).value or is_anchor(grid, i, y):
             break
         x_length += 1
 
-    for j in range(y - 1, 0, -1):
+    for j in range(y - 1, -1, -1):
         if grid.get_tile(x, j).value or is_anchor(grid, x, j):
             break
         y_length += 1
 
-    if x_length == 0 and i > 0:
-        word = grid.get_word(x - 1, y, True)
+    if x_length == 0:
+        word = grid.get_word(i, y, True)
         x_trie = trie.find(word) or trie
 
-    if y_length == 0 and j > 0:
-        word = grid.get_word(x, y - 1, False)
+    if y_length == 0:
+        word = grid.get_word(x, j, False)
         y_trie = trie.find(word) or trie
 
     return Anchor(x, y, x_length, y_length, x_trie, y_trie)
